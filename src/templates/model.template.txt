@@ -1,0 +1,35 @@
+import { Identifiable } from "../identifiable";
+import { Factory } from "../factory";
+import { ObjectId } from "mongodb";
+
+export default class [OBJECTNAME] implements Identifiable  {
+    public _id: ObjectId;
+    public static _idField: string = "[IDFIELD]";
+
+	[PROPERTIES]
+
+
+    public constructor(json: any) {
+        if(json._id === undefined) throw new Error("_id is required for [OBJECTNAME]")
+        else this._id = json._id
+
+        [INITS]
+    }
+
+    static getFactory(): Factory<[OBJECTNAME]> {
+        return new (class implements Factory<[OBJECTNAME]> {
+            make(json: any): [OBJECTNAME] { return new [OBJECTNAME](json) }
+            getCollectionName(): string {
+                return "[OBJECTNAME]";
+            }
+
+            getUrl(id?: string): string {
+                return [OBJECTNAME].getUrl();
+            }
+        })();
+    };
+
+    static getUrl(id?: string): string {
+        return "/sde/[OBJECTNAME]" + (id ? `/${id}` : "");
+    }
+}

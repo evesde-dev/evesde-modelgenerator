@@ -1,0 +1,96 @@
+import { Request, Response } from "express";
+import routable from "../../decorators/routable.decorator";
+import [OBJECTNAME] from "../../models/sde/[OBJECTNAME].model";
+import { DbUtilities as DB } from "../../utilities/db-utilities";
+import Utilities from "../../utilities/utilities";
+
+export default class [OBJECTNAME]_controller {
+    public static tags: string[] = ["EVE Online SDE"];
+
+    @routable({
+        path: "/sde/[OBJECTNAME_LOWER]",
+        method: "get",
+        swagger: {
+            summary: "Get all [OBJECTNAME].",
+            parameters: [
+                {
+                    $ref: "#/parameters/page",
+                },
+                {
+                    $ref: "#/parameters/limit",
+                },
+            ],
+            responses: {
+                "200": {
+                    description: "A list of [OBJECTNAME].",
+                    properties: {
+                        [SCHEMAS]
+                    },
+                },
+                "400": {
+                    description: "Not Found"
+                },
+                "420": {
+                    description: "Rate Limited"
+                }
+            }
+        },
+    })
+    public async get[OBJECTNAME]s(req: Request, res: Response) {
+        let [page, limit] = Utilities.parseCommonParams(req.query);
+        DB.Query({}, [OBJECTNAME].getFactory(), {
+            skip: (page - 1) * limit,
+            limit,
+        })
+            .then(([OBJECTNAME]s: [OBJECTNAME][]) => {
+                res.status(200).send([OBJECTNAME]s);
+                return [OBJECTNAME]s;
+            })
+            .catch((e: any) => {
+                res.status(500).send(e);
+                console.error("ERROR", e);
+            });
+    }
+
+    @routable({
+        path: "/sde/[OBJECTNAME_LOWER]/:id",
+        method: "get",
+        swagger: {
+            summary: "Get a [OBJECTNAME] with id provided by {id}.",
+            parameters: [
+                {
+                    name: "id",
+                    in: "path",
+                    description: "This id should be the relevant CCP provided id for the object type.",
+                    required: true,
+                    schema: { type: "string" },
+                },
+            ],
+            responses: {
+                "200": {
+                    description: "A [OBJECTNAME].",
+                    properties: {
+                        [SCHEMAS]
+                    },
+                },
+                "400": {
+                    description: "Not Found"
+                },
+                "420": {
+                    description: "Rate Limited"
+                }
+            }
+        },
+    })
+    public async get[OBJECTNAME](req: Request, res: Response) {
+        DB.Query({ [[OBJECTNAME]._idField]: parseInt(req.params.id) }, [OBJECTNAME].getFactory())
+            .then(([OBJECTNAME_LOWER]: [OBJECTNAME][]) => {
+                res.status(200).send([OBJECTNAME_LOWER]);
+                return [OBJECTNAME_LOWER];
+            })
+            .catch((e: any) => {
+                res.status(500).send(e);
+                console.error("ERROR", e);
+            });
+    }
+}
